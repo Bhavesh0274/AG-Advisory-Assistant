@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+data/raw/*.pdf
+data/corpus/*.jsonl
+data/nlp/*.parquet
+data/nlp/*.jsonl
+data/finetune/*.jsonl
+models/adapters/*
+!models/adapters/.gitkeep
+*.faiss
+*.index
+wandb/
+.ipynb_checkpoints/
+.pytest_cache/
