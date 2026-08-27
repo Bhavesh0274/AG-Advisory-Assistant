@@ -19,18 +19,30 @@ the decision.
 
 ## Status
 
-Build in progress, following `agri-commodity-copilot-build-guide.md`. Current phase: **forecasting**.
+Build in progress, following `agri-commodity-copilot-build-guide.md`. Current phase: **analytics**.
 
 - [x] Phase 1 — repo scaffold
 - [x] Phase 2 — price data ingestion (RAG driver corpus still pending)
 - [x] Phase 3 — feature engineering
-- [ ] Phase 4 — forecasting models
-- [ ] Phase 5 — walk-forward backtest harness
+- [x] Phase 4 — forecasting models (baselines + LightGBM; ARIMA/Prophet/LSTM/TFT pending)
+- [x] Phase 5 — walk-forward backtest harness
 - [ ] Phase 6 — analytics layer
 - [ ] Phase 7 — RAG
 - [ ] Phase 8 — agent fusion
 - [ ] Phase 9 — guardrails
 - [ ] Phase 10 — dashboard + serving
+
+## Forecast leaderboard (honest finding)
+
+Full results in `reports/forecast_eval.md` (walk-forward backtest, MASE vs SeasonalNaive).
+Headline finding: **RandomWalk (flat, persistence) beats every other model on MAE/RMSE/MASE**
+across both commodities and all horizons (7/14/30d) - SeasonalNaive is notably worse (MASE
+0.6-0.8 of its own in-sample scale), and LightGBM's recursive multi-step forecast accumulates
+error and lags RandomWalk on point accuracy. But RandomWalk's forecast is flat by construction,
+so its directional accuracy is near-zero (~11%) - it never actually calls a direction, which
+is what a hold/sell decision needs. LightGBM's directional accuracy (~40-50%) is meaningfully
+better despite worse MAE. Reported honestly rather than picking whichever metric flatters a
+more complex model.
 
 ## Scope
 
@@ -77,6 +89,10 @@ python -m src.data.fetch
   in Phase 6 will be feature-limited to price alone until we get one.
 - Current data source (Kaggle) has ~10-40% missing days even within its covered window; Phase 3
   needs a real gap-handling strategy, not just an assumption of clean daily data.
+- LightGBM's recursive multi-step forecasting accumulates error over the horizon and currently
+  loses to the flat RandomWalk baseline on point-error metrics; ARIMA/Prophet/LSTM/TFT
+  (guide's classical/DL tiers) aren't built yet and might do better, but the results so far
+  are a reminder not to assume a fancier model wins on noisy ~2-year commodity data.
 - Retrieved drivers are plausible context, not proven causation.
 - This is decision-support, **not** trading infrastructure and **not** financial advice.
 
