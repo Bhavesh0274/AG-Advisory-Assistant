@@ -1,42 +1,27 @@
-# data + RAG
-requests
 pandas
-duckdb
-pypdf
-unstructured
-camelot-py[cv]
-langchain
-llama-index
+numpy
+requests
+pyarrow
+tabulate
+
+statsforecast
+prophet
+darts
+pytorch-forecasting
+lightgbm
+scikit-learn
+statsmodels
+
+sentence-transformers
 faiss-cpu
 chromadb
-sentence-transformers
-rank-bm25
-
-# NLP modeling
-scikit-learn
-spacy
-bertopic
-seqeval
-datasets
-
-# fine-tuning
-transformers
-peft
-bitsandbytes
-trl
-accelerate
-
-# evaluation
 ragas
-deepeval
+
 anthropic
 
-# serving + tracking
 fastapi
 uvicorn
 streamlit
-wandb
+apscheduler
 
-# dev
 pytest
-python-dotenv

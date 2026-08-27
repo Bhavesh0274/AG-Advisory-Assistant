@@ -1,27 +1,26 @@
-# Project: Agricultural Advisory Assistant — RAG vs Fine-Tuning
+# Project: Agri-Commodity Intelligence Copilot
 
-Thesis: RAG supplies knowledge; fine-tuning supplies behavior. Prove it with a 2×2
-(base/fine-tuned × RAG off/on), scored on one evaluation harness.
-
-Crops in scope: **rice, wheat, tomato**.
-
-Build order: data → corpus → RAG v1 → NLP layer (intent + NER/IE + topics) →
-gold set → eval harness → SFT data → fine-tune → run 2×2 → guardrails/serve → writeup.
-
-Full spec: `ag-advisory-build-guide-FINAL.md` (read before starting any phase not yet summarized here).
+Coherence: forecasting gives the number, RAG the why, analytics the signal, agent the decision.
+Build order: data → features → forecasting → backtest harness → analytics → RAG → agent →
+guardrails → dashboard.
 
 ## Rules
-- Safety first: no ungrounded dosages/chemicals; abstain when retrieved context is thin; every answer cites sources + carries a "verify locally" disclaimer.
-- Keep train data (`data/finetune/`) and eval data (`eval/datasets/gold.jsonl`) strictly separate — assert zero overlap wherever both are built.
-- Fine-tuning teaches format/citation-discipline/abstention, NOT facts.
-- RAGAS evaluates the RAG arm only; use custom/seqeval/sklearn for intent, NER, abstention, dosage-hallucination.
-- Every phase ships tests and updates its report in `reports/`.
-- Secrets via env vars only (`.env`, never committed).
+- Backtest with walk-forward/expanding-window ONLY; report MASE vs seasonal-naive; never random splits.
+- Decision-support, not advice: always show uncertainty + a disclaimer; drivers are context, not causation.
+- Beat the baseline before adding complexity; report honestly when a model doesn't.
+- Every phase ships tests + updates its report. Secrets via env vars (DATA_GOV_IN_API_KEY, ANTHROPIC_API_KEY).
+
+## Scope (current slice)
+- Commodities: Onion, Potato (narrowed from a 5-commodity plan; see README.md Scope section)
+- Markets: Agra, Indore, Lasalgaon, Pune (Latur has no coverage in the current data source)
+- Data source: Kaggle "Indian Agricultural Mandi Prices (2023-2025)" export in
+  data/raw/kaggle/, no arrivals column. See README.md "Data sources" for why data.gov.in and
+  CEDA weren't usable as the primary historical source.
 
 ## Stack
-transformers+peft+bitsandbytes+trl (QLoRA, 3B), FAISS/Chroma, BGE/E5 embeddings,
-scikit-learn + spaCy + BERTopic (intent/NER/topics), RAGAS + seqeval + custom eval,
-Anthropic API as LLM-judge, FastAPI + Streamlit, W&B.
+pandas, darts / pytorch-forecasting / statsforecast, LightGBM, scikit-learn,
+FAISS + BGE/E5 + RAGAS, Anthropic API (agent), FastAPI + Streamlit.
 
-## Status
-See `PROGRESS.md` for current phase and what's done.
+## Phase-gate loop
+implement → test → check acceptance → commit → next. See `agri-commodity-copilot-build-guide.md`
+for full phase-by-phase goals, acceptance criteria, and prompts.
